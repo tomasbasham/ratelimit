@@ -1,0 +1,10 @@
+version: '2'
+services:
+  python: &defaults
+    build: .
+    volumes:
+      - .:/usr/src/app
+
+  test:
+    <<: *defaults
+    entrypoint: ['/usr/local/bin/py.test']
