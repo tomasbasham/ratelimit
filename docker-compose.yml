@@ -8,3 +8,13 @@ services:
   test:
     <<: *defaults
     entrypoint: ['/usr/local/bin/py.test']
+
+  travis:
+    image: tomasbasham/travis:1.8.2
+    volumes:
+      - travis-data:/root/.travis
+      - .:/usr/src/app
+
+volumes:
+  travis-data:
+    external: true
