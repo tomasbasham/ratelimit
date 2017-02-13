@@ -37,7 +37,7 @@ To use this package you simply have to declare the decorator before the method y
 
 .. code:: python
 
-    from ratelimit import *
+    from ratelimit import rate_limited
     import requests
 
     @rate_limited(1)
@@ -49,14 +49,14 @@ To use this package you simply have to declare the decorator before the method y
 
       return response
 
-This method makes a call to our API. Note that this method has been implemented with a decorator that dictates that this method may only be called once per second.
+This method makes a call to our API. Note that this method has been implemented with a decorator enforcing that it may only be called once per second.
 
-The argument passed into the decorator imposes the time that must elapse before a method can be called again.
+The argument passed into the decorator imposes the number of method invocation allowed over a time period specified (in seconds). If no time period is specified then it default to 1 second.
 
 Contributing
 ------------
 
-1. Fork it ( https://github.com/tomasbasham/ratelimit/fork )
+1. Fork it (https://github.com/tomasbasham/ratelimit/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
