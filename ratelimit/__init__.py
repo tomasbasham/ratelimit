@@ -1,5 +1,4 @@
 from math import floor
-
 import time
 import sys
 
@@ -25,12 +24,12 @@ def rate_limited(period = 1, every = 1.0):
     last_called = [0.0]
 
     def wrapper(*args, **kargs):
-      elapsed = time.clock() - last_called[0]
+      elapsed = time.time() - last_called[0]
       left_to_wait = frequency - elapsed
       if left_to_wait > 0:
         time.sleep(left_to_wait)
       ret = func(*args, **kargs)
-      last_called[0] = time.clock()
+      last_called[0] = time.time()
       return ret
     return wrapper
   return decorator
