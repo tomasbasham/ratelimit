@@ -10,7 +10,7 @@ services:
     entrypoint: ['/usr/local/bin/py.test']
 
   travis:
-    image: tomasbasham/travis:1.8.2
+    image: tomasbasham/travis:1.8.8
     volumes:
       - travis-data:/root/.travis
       - .:/usr/src/app
