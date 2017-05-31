@@ -1,6 +1,7 @@
-import time
 from ratelimit import rate_limited
 from tests import *
+
+import time
 
 class TestDecorator(unittest.TestCase):
 
@@ -26,4 +27,4 @@ class TestDecorator(unittest.TestCase):
       self.increment()
       after = time.time()
       # allow a 0.1 second error
-      self.assertTrue((after-before - 2.0) < 0.1, "Function was executed too fast")
+      self.assertTrue((after - before - 2.0) < 0.1, 'Function was executed too fast')
