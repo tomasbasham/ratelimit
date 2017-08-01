@@ -2,6 +2,7 @@ from math import floor
 
 import time
 import sys
+import threading
 
 def rate_limited(period = 1, every = 1.0):
   '''
@@ -23,6 +24,9 @@ def rate_limited(period = 1, every = 1.0):
     # work, but instead reassigning the value at a
     # particular index.
     last_called = [0.0]
+
+    #add thread safety
+    lock = threading.RLock()
 
     def wrapper(*args, **kargs):
       elapsed = time.time() - last_called[0]
