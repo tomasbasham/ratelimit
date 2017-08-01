@@ -2,6 +2,7 @@ from math import floor
 
 import time
 import sys
+import threading
 
 def rate_limited(period = 1, every = 1.0):
   '''
@@ -24,14 +25,18 @@ def rate_limited(period = 1, every = 1.0):
     # particular index.
     last_called = [0.0]
 
+    #add thread safety
+    lock = threading.RLock()
+
     def wrapper(*args, **kargs):
-      elapsed = time.time() - last_called[0]
-      left_to_wait = frequency - elapsed
-      if left_to_wait > 0:
-        time.sleep(left_to_wait)
-      ret = func(*args, **kargs)
-      last_called[0] = time.time()
-      return ret
+      with lock:
+        elapsed = time.time() - last_called[0]
+        left_to_wait = frequency - elapsed
+        if left_to_wait > 0:
+          time.sleep(left_to_wait)
+        ret = func(*args, **kargs)
+        last_called[0] = time.time()
+        return ret
     return wrapper
   return decorator
 
@@ -50,3 +55,28 @@ def clamp(value):
 __all__ = [
   'rate_limited'
 ]
+
+@rate_limited(1,2)
+def increment():
+  '''
+  Increment the counter at most once
+  every 2 seconds.
+  '''
+  print "hello"
+
+def test():
+  for i in range(10):
+    before = time.time()
+    print before
+    increment()
+    after = time.time()
+    print after
+
+thread = threading.Thread(target = test)
+thread1 = threading.Thread(target = test)
+
+thread.start()
+thread1.start()
+
+thread.join()
+thread1.join()
