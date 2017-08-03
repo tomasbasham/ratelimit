@@ -1,6 +1,7 @@
-ratelimit
-=========
-.. image:: https://travis-ci.org/tomasbasham/ratelimit.svg?branch=master
+ratelimit |build|
+=================
+
+.. |build| image:: https://travis-ci.org/tomasbasham/ratelimit.svg?branch=master
     :target: https://travis-ci.org/tomasbasham/ratelimit
 
 APIs are a very common way to interact with web services. As the need to consume data grows, so does the number of API calls necessary to remain up to date with data sources. However many API providers constrain developers from making too many API calls. This is know as rate limiting and in a worst case scenario your application can be banned from making further API calls if it abuses these limits.
