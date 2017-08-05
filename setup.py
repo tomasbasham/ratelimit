@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='ratelimit',
-    version=Version('1.3.0').number,
+    version=Version('1.4.0').number,
     description='API rate limit decorator',
     long_description=readme().strip(),
     author='Tomas Basham',
