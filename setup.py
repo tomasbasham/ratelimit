@@ -31,5 +31,5 @@ setup(
         'Topic :: Software Development'
     ],
     include_package_data=True,
-    ip_safe=False
+    zip_safe=False
 )
