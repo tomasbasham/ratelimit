@@ -39,11 +39,11 @@ def rate_limited(period=1, every=1.0):
             '''Decorator wrapper function'''
             with lock:
                 elapsed = time.time() - last_called[0]
-            left_to_wait = frequency - elapsed
-            if left_to_wait > 0:
-                time.sleep(left_to_wait)
+                left_to_wait = frequency - elapsed
+                if left_to_wait > 0:
+                    time.sleep(left_to_wait)
+                last_called[0] = time.time()
             ret = func(*args, **kargs)
-            last_called[0] = time.time()
             return ret
         return wrapper
     return decorator
