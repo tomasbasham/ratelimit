@@ -43,8 +43,7 @@ def rate_limited(period=1, every=1.0):
                 if left_to_wait > 0:
                     time.sleep(left_to_wait)
                 last_called[0] = time.time()
-            ret = func(*args, **kargs)
-            return ret
+            return func(*args, **kargs)
         return wrapper
     return decorator
 
