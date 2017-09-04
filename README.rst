@@ -40,8 +40,10 @@ To use this package you simply have to declare the decorator before the method y
 
     from ratelimit import rate_limited
     import requests
+    
+    ONE_HOUR = 3600
 
-    @rate_limited(1)
+    @rate_limited(100, ONE_HOUR)
     def call_api(self, url):
       response = requests.get(url)
 
@@ -50,7 +52,7 @@ To use this package you simply have to declare the decorator before the method y
 
       return response
 
-This method makes a call to our API. Note that this method has been implemented with a decorator enforcing that it may only be called once per second.
+This method makes a call to our API. Note that this method has been implemented with a decorator enforcing that it may only be called 100 times per hour.
 
 The argument passed into the decorator imposes the number of method invocation allowed over a time period specified (in seconds). If no time period is specified then it default to 1 second.
 
