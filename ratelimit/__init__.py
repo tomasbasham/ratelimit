@@ -13,6 +13,7 @@ def rate_limited(period=1, every=1.0):
     :param int period: Maximum method invocations within a period. Must be greater than 0.
     :param float every: A dampening factor (in seconds). Can be any number greater than 0.
     :return: Decorated function that will forward method invocations if the time window has elapsed.
+    :rtype: function
     '''
     frequency = abs(every) / float(clamp(period))
     def decorator(func):
@@ -21,7 +22,9 @@ def rate_limited(period=1, every=1.0):
         function, forwarding method invocations
         if the time window hes elapsed.
 
-        :param function func: Function to decorate
+        :param function func: The function to decorate.
+        :return: Decorated function.
+        :rtype: function
         '''
 
         # To get around issues with function local scope
@@ -49,13 +52,16 @@ def rate_limited(period=1, every=1.0):
 
 def clamp(value):
     '''
+    Clamp integer between 1 and max
+
     There must be at least 1 method invocation
     made over the time period. Make sure the
-    value passed is at least one and is not
-    a fraction of an invocation (wtf, like???)
+    value passed is at least 1 and is not a
+    fraction of an invocation.
 
     :param float value: The number of method invocations.
     :return: Clamped number of invocations.
+    :rtype: int
     '''
     return max(1, min(sys.maxsize, floor(value)))
 
