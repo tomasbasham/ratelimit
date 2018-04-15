@@ -1,30 +1,30 @@
-import time
-
-from ratelimit import rate_limited
-from tests import unittest
+from ratelimit import limits, RateLimitException
+from tests import unittest, clock
 
 class TestDecorator(unittest.TestCase):
 
-    @rate_limited(1, 2)
+    @limits(calls=1, period=10, clock=clock)
     def increment(self):
         '''
-        Increment the counter at most once
-        every 2 seconds.
+        Increment the counter at most once every 10 seconds.
         '''
         self.count += 1
 
     def setUp(self):
         self.count = 0
+        clock.increment(10)
 
-    def test_decorator(self):
-        self.assertEqual(self.count, 0)
+    def test_increment(self):
         self.increment()
         self.assertEqual(self.count, 1)
 
-    def test_timing(self):
-        for _i in range(10):
-            before = time.time()
+    def test_exception(self):
         self.increment()
-        after = time.time()
-        # allow a 0.1 second error
-        self.assertTrue((after - before - 2.0) < 0.1, 'Function was executed too fast')
+        self.assertRaises(RateLimitException, self.increment)
+
+    def test_reset(self):
+        self.increment()
+        clock.increment(10)
+
+        self.increment()
+        self.assertEqual(self.count, 2)
