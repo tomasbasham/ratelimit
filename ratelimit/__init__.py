@@ -8,14 +8,15 @@ exceeds a maximum within a specified time window.
 For examples and full documentation see the README at
 https://github.com/tomasbasham/ratelimt
 '''
-from ratelimit.decorator import RateLimitDecorator
+from ratelimit.decorators import RateLimitDecorator, sleep_and_retry
 from ratelimit.exception import RateLimitException
 
 limits = RateLimitDecorator
 
 __all__ = [
     'RateLimitException',
-    'limits'
+    'limits',
+    'sleep_and_retry'
 ]
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'

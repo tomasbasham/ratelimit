@@ -59,10 +59,10 @@ class RateLimitDecorator(object):
             '''
             with self.lock:
                 elapsed = self.clock() - self.last_reset
-                remaining_period = self.period - elapsed
+                period_remaining = self.period - elapsed
 
                 # If the time window has elapsed then reset.
-                if remaining_period <= 0:
+                if period_remaining <= 0:
                     self.num_calls = 0
                     self.last_reset = self.clock()
 
@@ -72,7 +72,32 @@ class RateLimitDecorator(object):
                 # If the number of attempts to call the function exceeds the
                 # maximum then raise an exception.
                 if self.num_calls > self.clamped_calls:
-                    raise RateLimitException('too many calls')
+                    raise RateLimitException('too many calls', period_remaining)
 
             return func(*args, **kargs)
         return wrapper
+
+def sleep_and_retry(func):
+    '''
+    Return a wrapped function that rescues rate limit exceptions, sleeping the
+    current thread until rate limit resets.
+
+    :param function func: The function to decorate.
+    :return: Decorated function.
+    :rtype: function
+    '''
+    @wraps(func)
+    def wrapper(*args, **kargs):
+        '''
+        Call the rate limited function. If the function raises a rate limit
+        exception sleep for the remaing time period and retry the function.
+
+        :param args: non-keyword variable length argument list to the decorated function.
+        :param kargs: keyworded variable length argument list to the decorated function.
+        '''
+        try:
+            return func(*args, **kargs)
+        except RateLimitException as exception:
+            time.sleep(exception.period_remaining)
+            return func(*args, **kargs)
+    return wrapper
