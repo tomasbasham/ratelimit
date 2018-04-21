@@ -11,9 +11,10 @@ making too many API calls. This is know as rate limiting and in a worst case
 scenario your application can be banned from making further API calls if it
 abuses these limits.
 
-This packages introduces a method decorator preventing a method from being
-called more than once within a given time period. This should prevent API
-providers from banning your applications by conforming to set rate limits.
+This packages introduces a function decorator preventing a function from being
+called more often than that allowed by the API provider. This should prevent
+API providers from banning your applications by conforming to their rate
+limits.
 
 Installation
 ------------
@@ -41,8 +42,7 @@ Installing the latest version from Github:
 Usage
 -----
 
-To use this package you simply have to declare the decorator before the method
-you wish to rate limit:
+To use this package simply decorate any function that makes an API call:
 
 .. code:: python
 
@@ -60,15 +60,15 @@ you wish to rate limit:
             raise Exception('API response: {}'.format(response.status_code))
         return response
 
-This method makes a call to our API. Note that this method has been implemented
-with a decorator enforcing that it may only be called 15 times every 15
-minutes.
+This function will not be able to make more then 15 API call within a 15 minute
+time period.
 
-The arguments passed into the decorator impose the number of method invocation
-allowed over a specified time period (in seconds). If no time period is
-specified then it defaults to 15 minutes (the time window imposed by Twitter).
+The arguments passed into the decorator describe the number of function
+invocation allowed over a specified time period (in seconds). If no time period
+is specified then it defaults to 15 minutes (the time window imposed by
+Twitter).
 
-If a decorated method is called more times than that allowed within the
+If a decorated function is called more times than that allowed within the
 specified time period then a ``ratelimit.RateLimitException`` is raised. This
 may be used to implement a retry strategy such as an `expoential backoff
 <https://pypi.org/project/backoff/>`_
@@ -93,8 +93,8 @@ may be used to implement a retry strategy such as an `expoential backoff
 
 Alternatively to cause the current thread to sleep until the specified time
 period has ellapsed and then retry the function use the ``sleep_and_retry``
-decorator. This ensure that every function invocation is successful at the cost
-of halting the thread.
+decorator. This ensures that every function invocation is successful at the
+cost of halting the thread.
 
 .. code:: python
 
