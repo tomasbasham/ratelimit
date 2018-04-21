@@ -23,8 +23,6 @@ class RateLimitDecorator(object):
         :param int calls: Maximum function invocations allowed within a time period. Must be a number greater than 0.
         :param float period: An upper bound time period (in seconds) before the rate limit resets. Must be a number greater than 0.
         :param function clock: An optional function retuning the current time. This is used primarily for testing.
-        :return: A function decorator.
-        :rtype: function
         '''
         self.clamped_calls = max(1, min(sys.maxsize, floor(calls)))
         self.period = period
@@ -55,8 +53,8 @@ class RateLimitDecorator(object):
             be called so the caller may implement a retry strategy such as an
             exponential backoff.
 
-            :param args:
-            :param kargs:
+            :param args: non-keyword variable length argument list to the decorated function.
+            :param kargs: keyworded variable length argument list to the decorated function.
             :raises: RateLimitException
             '''
             with self.lock:
@@ -68,10 +66,10 @@ class RateLimitDecorator(object):
                     self.num_calls = 0
                     self.last_reset = self.clock()
 
-                # Increase the number of attempts to call the method.
+                # Increase the number of attempts to call the function.
                 self.num_calls += 1
 
-                # If the number of attempts to call the method exceeds the
+                # If the number of attempts to call the function exceeds the
                 # maximum then raise an exception.
                 if self.num_calls > self.clamped_calls:
                     raise RateLimitException('too many calls')

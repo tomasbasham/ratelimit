@@ -47,6 +47,7 @@ you wish to rate limit:
 .. code:: python
 
     from ratelimit import limits
+
     import requests
 
     FIFTEEN_MINUTES = 900
@@ -76,6 +77,8 @@ may be used to implement a retry strategy such as an `expoential backoff
 
     from ratelimit import limits, RateLimitException
     from backoff import on_exception, expo
+
+    import requests
 
     FIFTEEN_MINUTES = 900
 
