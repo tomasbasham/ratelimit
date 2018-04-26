@@ -14,7 +14,7 @@ class RateLimitDecorator(object):
     '''
     Rate limit decorator class.
     '''
-    def __init__(self, calls=15, period=900, clock=now):
+    def __init__(self, calls=15, period=900, clock=now, raise_on_limit=True):
         '''
         Instantiate a RateLimitDecorator with some sensible defaults. By
         default the Twitter rate limiting window is respected (15 calls every
@@ -23,10 +23,12 @@ class RateLimitDecorator(object):
         :param int calls: Maximum function invocations allowed within a time period. Must be a number greater than 0.
         :param float period: An upper bound time period (in seconds) before the rate limit resets. Must be a number greater than 0.
         :param function clock: An optional function retuning the current time. This is used primarily for testing.
+        :param bool raise_on_limit: A bool that allow avoiding rasing exception
         '''
         self.clamped_calls = max(1, min(sys.maxsize, floor(calls)))
         self.period = period
         self.clock = clock
+        self.raise_on_limit = raise_on_limit
 
         # Initialise the decorator state.
         self.last_reset = clock()
@@ -72,7 +74,9 @@ class RateLimitDecorator(object):
                 # If the number of attempts to call the function exceeds the
                 # maximum then raise an exception.
                 if self.num_calls > self.clamped_calls:
-                    raise RateLimitException('too many calls', period_remaining)
+                    if self.raise_on_limit:
+                        raise RateLimitException('too many calls', period_remaining)
+                    return
 
             return func(*args, **kargs)
         return wrapper
