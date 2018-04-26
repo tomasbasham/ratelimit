@@ -13,8 +13,8 @@ class TestDecorator(unittest.TestCase):
     @limits(calls=1, period=10, clock=clock, raise_on_limit=False)
     def increment_no_exception(self):
         '''
-        Increment the counter at most once every 10 seconds, but w/o rasing
-        an exception when reaching limit.
+        Increment the counter at most once every 10 seconds, but w/o rasing an
+        exception when reaching limit.
         '''
         self.count += 1
 
@@ -40,3 +40,5 @@ class TestDecorator(unittest.TestCase):
     def test_no_exception(self):
         self.increment_no_exception()
         self.increment_no_exception()
+
+        self.assertEqual(self.count, 1)

@@ -23,7 +23,7 @@ class RateLimitDecorator(object):
         :param int calls: Maximum function invocations allowed within a time period. Must be a number greater than 0.
         :param float period: An upper bound time period (in seconds) before the rate limit resets. Must be a number greater than 0.
         :param function clock: An optional function retuning the current time. This is used primarily for testing.
-        :param bool raise_on_limit: A bool that allow avoiding rasing exception
+        :param bool raise_on_limit: A boolean allowing the caller to avoiding rasing an exception.
         '''
         self.clamped_calls = max(1, min(sys.maxsize, floor(calls)))
         self.period = period
@@ -60,8 +60,7 @@ class RateLimitDecorator(object):
             :raises: RateLimitException
             '''
             with self.lock:
-                elapsed = self.clock() - self.last_reset
-                period_remaining = self.period - elapsed
+                period_remaining = self.__period_remaining()
 
                 # If the time window has elapsed then reset.
                 if period_remaining <= 0:
@@ -80,6 +79,16 @@ class RateLimitDecorator(object):
 
             return func(*args, **kargs)
         return wrapper
+
+    def __period_remaining(self):
+        '''
+        Return the period remaining for the current rate limit window.
+
+        :return: The remaing period.
+        :rtype: float
+        '''
+        elapsed = self.clock() - self.last_reset
+        return self.period - elapsed
 
 def sleep_and_retry(func):
     '''
