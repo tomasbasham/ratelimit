@@ -2,28 +2,12 @@
 language: python
 python:
   - "2.7"
-  - "3.2"
+  - "3.5"
 
 sudo: false
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - python: "3.2"
 
 script:
   - py.test
-
-notifications:
-  email: false
-  slack:
-    secure: "FBQgSpZpjeEtfciTab0cxvezkD1PPxdPQ94fHmjqV44iaDY47ZyfODZBpjO6g2Bhhjq26YiFZjlzFjykh4H+YoWCTRzL7+ZBqomUSzLbeR75heyjAfK7+DM3t5PdET2ND5WnMSr/I2GeoKubC2lAAj35lCAWKQAp3EjW+5GDww90m0i+GOSa+btTYIkIQZcDxmcO8rJCe8+/LibEVRcQT7Xv7y/gMfIJOXceW/5DC62CdV4mas14raZn4ZVVCypbqOvv1kxQS4epfe0diYOxOprH6txJKb3MpJw0AHF5rFaZKU7NGb2+BI40OYl7tCE8V+7d3m5Cj+NdhTNeoMhGypT5IFvkQ8vRq4HYbR6NCbZcKw8K+ziY8Hog1PCB5YJGzMjHHtAGXqSp18nsBbiuwZ19+bq5X9Fzkpkzh7th13MEjhM1JUVU8K7U7sOkG3iVVmbMi7oN26sQnGShZ/pyGRQyW1ArvjLGVIII051oJgrWU1oSOXDQM8lcasPD7/+iHHiU8WBz5RaJM9Prh6HmIfpKkxL3llygwDmS0IMZDavVmvDmDq4SxxjkKergyPmTXyCAS6J30pO4aTPspOQU4bkgdv1XJ49euOtHjjXywyuPQZnq3+gtzTf2ewIhcecUkfUq1WXObfzd8rLiRvWIMDY/i0/hNdpsvNo/SYDyc2c="
-
-deploy:
-  provider: pypi
-  user: tomasbasham
-  password:
-    secure: "LINWjh/St+8DuIIk3DPFvmt6+v4Y4fY+BgsE10vAc7xdsEEBkdizEksrfF6FyGPdfmasJT2y3ceutcUhqnZVfcSxY6dWO9BteQ5dY9Bgk8395G/sf1ta8vF9NjemvFWRFaqyowrEWPdPVKofIjoz28+HJvuPf7kNIffCjnikoLMHvdfCPp2VWe65e2J9SkPgbp+KR2xRneIRbh4IIPITZv0O3BnjVf04eJLHzTztUn+o3+Emzna23EFNUK9i6hixodMI6O1cDkMq3Cj2/hH+RXmTftpLnI8/38cB008rgSF/sW8aDGK1yOAprNAXnRGbSKOQN4NV74T/9vhZxV3rRzmgTpYejq9uqwuH+ial3xVV/e3j4UgK4OQAgykIwfLj3oWAq0TcAFdD8q0zfmM2ET2nXuP+m1NMRZEAhdnlU5KeDFt828/n+Qvy7nC51xwPO1Ka6rlWLcIrcj6S0A0IVdn+FbNbHy8IVYHAHNziXxySn4QV5jPTk5vRNcs9brBEzI6AjYU6qrJppOjZCxCYQV0fbg5++DPITbYyTJd6nbdfqPU4khmX2g2KPnLaSDXNEVF4UqntKkuqUpEsajOUbSwhRyeZ0IwNYdvs7Vp4QdNxPoHH5iuZHGMszfUj1vBUyljALUi1WxDBD+Ggjes44f/m8OEr87ZrvU9VIW+zGjE="
-  on:
-    tags: true
-    repo: tomasbasham/ratelimit
