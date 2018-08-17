@@ -49,7 +49,7 @@ class RateLimitDecorator(object):
         @wraps(func)
         def wrapper(*args, **kargs):
             '''
-            Extend the behaviour of the decoated function, forwarding function
+            Extend the behaviour of the decorated function, forwarding function
             invocations previously called no sooner than a specified period of
             time. The decorator will raise an exception if the function cannot
             be called so the caller may implement a retry strategy such as an
