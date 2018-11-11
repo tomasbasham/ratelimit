@@ -1,8 +1,12 @@
-ratelimit |build|
-=================
+ratelimit |build| |maintainability|
+===================================
 
 .. |build| image:: https://travis-ci.org/tomasbasham/ratelimit.svg?branch=master
     :target: https://travis-ci.org/tomasbasham/ratelimit
+
+.. |maintainability| image:: https://api.codeclimate.com/v1/badges/21dc7c529c35cd7ef732/maintainability
+    :target: https://codeclimate.com/github/tomasbasham/ratelimit/maintainability
+    :alt: Maintainability
 
 APIs are a very common way to interact with web services. As the need to
 consume data grows, so does the number of API calls necessary to remain up to
