@@ -1,13 +1,6 @@
 ratelimit |build| |maintainability|
 ===================================
 
-.. |build| image:: https://travis-ci.org/tomasbasham/ratelimit.svg?branch=master
-    :target: https://travis-ci.org/tomasbasham/ratelimit
-
-.. |maintainability| image:: https://api.codeclimate.com/v1/badges/21dc7c529c35cd7ef732/maintainability
-    :target: https://codeclimate.com/github/tomasbasham/ratelimit/maintainability
-    :alt: Maintainability
-
 APIs are a very common way to interact with web services. As the need to
 consume data grows, so does the number of API calls necessary to remain up to
 date with data sources. However many API providers constrain developers from
@@ -26,7 +19,19 @@ Installation
 PyPi
 ~~~~
 
-To install ratelimit, simply:
+Add this line to your application's requirements.txt:
+
+.. code:: python
+
+    ratelimit
+
+And then execute:
+
+.. code:: bash
+
+    $ pip install -r requirements.txt
+
+Or install it yourself:
 
 .. code:: bash
 
@@ -125,3 +130,15 @@ Contributing
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+License
+-------
+
+This project is licensed under the `MIT License <LICENSE.txt>`_.
+
+.. |build| image:: https://travis-ci.com/tomasbasham/ratelimit.svg?branch=master
+    :target: https://travis-ci.com/tomasbasham/ratelimit
+
+.. |maintainability| image:: https://api.codeclimate.com/v1/badges/21dc7c529c35cd7ef732/maintainability
+    :target: https://codeclimate.com/github/tomasbasham/ratelimit/maintainability
+    :alt: Maintainability

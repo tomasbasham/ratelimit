@@ -1,3 +1,6 @@
+'''
+Rate limit exceptions.
+'''
 class RateLimitException(Exception):
     '''
     Rate limit exception class.
