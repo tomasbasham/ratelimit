@@ -122,15 +122,6 @@ cost of halting the thread.
             raise Exception('API response: {}'.format(response.status_code))
         return response
 
-Contributing
-------------
-
-1. Fork it (https://github.com/tomasbasham/ratelimit/fork)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
-
 License
 -------
 

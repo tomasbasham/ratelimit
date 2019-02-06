@@ -1,3 +1,4 @@
 include CODE_OF_CONDUCT.rst
+include CONTRIBUTING.rst
 include LICENSE.txt
 include README.rst
