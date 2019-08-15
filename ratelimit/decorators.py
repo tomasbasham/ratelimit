@@ -11,9 +11,12 @@ from math import floor
 import time
 import sys
 import threading
+import inspect
+import asyncio
 
 from ratelimit.exception import RateLimitException
 from ratelimit.utils import now
+
 
 class RateLimitDecorator(object):
     '''
@@ -42,6 +45,26 @@ class RateLimitDecorator(object):
         # Add thread safety.
         self.lock = threading.RLock()
 
+    def _check_limit_exceeded(self):
+        with self.lock:
+            period_remaining = self.__period_remaining()
+
+            # If the time window has elapsed then reset.
+            if period_remaining <= 0:
+                self.num_calls = 0
+                self.last_reset = self.clock()
+
+            # Increase the number of attempts to call the function.
+            self.num_calls += 1
+
+            # If the number of attempts to call the function exceeds the
+            # maximum then raise an exception.
+            if self.num_calls > self.clamped_calls:
+                if self.raise_on_limit:
+                    raise RateLimitException('too many calls', period_remaining)
+                return True
+            return False
+
     def __call__(self, func):
         '''
         Return a wrapped function that prevents further function invocations if
@@ -64,26 +87,23 @@ class RateLimitDecorator(object):
             :param kargs: keyworded variable length argument list to the decorated function.
             :raises: RateLimitException
             '''
-            with self.lock:
-                period_remaining = self.__period_remaining()
-
-                # If the time window has elapsed then reset.
-                if period_remaining <= 0:
-                    self.num_calls = 0
-                    self.last_reset = self.clock()
-
-                # Increase the number of attempts to call the function.
-                self.num_calls += 1
-
-                # If the number of attempts to call the function exceeds the
-                # maximum then raise an exception.
-                if self.num_calls > self.clamped_calls:
-                    if self.raise_on_limit:
-                        raise RateLimitException('too many calls', period_remaining)
-                    return
-
+            if self._check_limit_exceeded():
+                return
             return func(*args, **kargs)
-        return wrapper
+
+        @wraps(func)
+        async def async_wrapper(*args, **kargs):
+            '''
+            Does the same thing as `wrapper` but in async manner
+            '''
+            if self._check_limit_exceeded():
+                return
+            return await func(*args, **kargs)
+
+        if inspect.iscoroutinefunction(func):
+            return async_wrapper
+        else:
+            return wrapper
 
     def __period_remaining(self):
         '''
@@ -94,6 +114,7 @@ class RateLimitDecorator(object):
         '''
         elapsed = self.clock() - self.last_reset
         return self.period - elapsed
+
 
 def sleep_and_retry(func):
     '''
@@ -118,4 +139,19 @@ def sleep_and_retry(func):
                 return func(*args, **kargs)
             except RateLimitException as exception:
                 time.sleep(exception.period_remaining)
-    return wrapper
+
+    @wraps(func)
+    async def async_wrapper(*args, **kargs):
+        '''
+        Does the same thing as `wrapper` but in async manner
+        '''
+        while True:
+            try:
+                return await func(*args, **kargs)
+            except RateLimitException as exception:
+                await asyncio.sleep(exception.period_remaining)
+
+    if inspect.iscoroutinefunction(func):
+        return async_wrapper
+    else:
+        return wrapper
