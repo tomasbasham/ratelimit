@@ -31,6 +31,12 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development'
     ],
+    package_data={
+        'ratelimit': [
+            'py.typed',
+            '*.pyi',
+        ]
+    },
     include_package_data=True,
     zip_safe=False
 )
