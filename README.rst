@@ -79,7 +79,7 @@ Twitter).
 
 If a decorated function is called more times than that allowed within the
 specified time period then a ``ratelimit.RateLimitException`` is raised. This
-may be used to implement a retry strategy such as an `expoential backoff
+may be used to implement a retry strategy such as an `exponential backoff
 <https://pypi.org/project/backoff/>`_
 
 .. code:: python
