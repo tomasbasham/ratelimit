@@ -101,6 +101,7 @@ class RateLimitDecorator(object):
         Reset the ratelimit.
         '''
         self.last_reset = self.clock()
+        self.num_calls = 0
 
 def sleep_and_retry(func):
     '''
