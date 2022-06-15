@@ -19,7 +19,15 @@ class RateLimitDecorator(object):
     '''
     Rate limit decorator class.
     '''
-    def __init__(self, calls=15, period=900, clock=now(), raise_on_limit=True):
+    def __init__(
+            self,
+            calls=15,
+            period=900,
+            clock=now(),
+            raise_on_limit=True,
+            treshold=None,
+            treshold_method=None
+    ):
         '''
         Instantiate a RateLimitDecorator with some sensible defaults. By
         default the Twitter rate limiting window is respected (15 calls every
@@ -29,15 +37,20 @@ class RateLimitDecorator(object):
         :param float period: An upper bound time period (in seconds) before the rate limit resets.
         :param function clock: An optional function retuning the current time.
         :param bool raise_on_limit: A boolean allowing the caller to avoiding rasing an exception.
+        :param float treshold: Optional fraction of the maximum number of available requests
+         under which calls invoke method, e.g: 0.2 to trigger at 20% remaining requests.
+        :param function treshold_method: An optional method to invoke when hitting the treshold.
         '''
         self.clamped_calls = max(1, min(sys.maxsize, floor(calls)))
         self.period = period
-        self.clock = clock
         self.raise_on_limit = raise_on_limit
+        self.treshold = treshold
+        self.treshold_method = treshold_method
+        self.clock = clock
 
         # Initialise the decorator state.
-        self.last_reset = clock()
-        self.num_calls = 0
+        self.last_update = clock()
+        self.allowance = self.clamped_calls
 
         # Add thread safety.
         self.lock = threading.RLock()
@@ -65,24 +78,27 @@ class RateLimitDecorator(object):
             :raises: RateLimitException
             '''
             with self.lock:
-                period_remaining = self.__period_remaining()
+                allowance_growth_per_second = self.clamped_calls / self.period
 
-                # If the time window has elapsed then reset.
-                if period_remaining <= 0:
-                    self.num_calls = 0
-                    self.last_reset = self.clock()
+                seconds_elapsed = self.clock() - self.last_update
+                self.allowance += floor(seconds_elapsed) * allowance_growth_per_second
+                self.last_update = self.clock()
 
-                # Increase the number of attempts to call the function.
-                self.num_calls += 1
+                if self.allowance > self.clamped_calls:
+                    self.allowance = self.clamped_calls
 
-                # If the number of attempts to call the function exceeds the
-                # maximum then raise an exception.
-                if self.num_calls > self.clamped_calls:
+                if self.treshold is not None and self.treshold_method is not None:
+                    treshold_allowance = self.treshold * self.clamped_calls
+                    if self.allowance < treshold_allowance:
+                        self.treshold_method()
+                if self.allowance < 1.0:
+                    period_renaming = self.__period_remaining()
                     if self.raise_on_limit:
-                        raise RateLimitException('too many calls', period_remaining)
-                    return
-
+                        raise RateLimitException('too many calls', period_renaming)
+                    return None
+                self.allowance -= 1.0
             return func(*args, **kargs)
+
         return wrapper
 
     def __period_remaining(self):
@@ -92,8 +108,7 @@ class RateLimitDecorator(object):
         :return: The remaing period.
         :rtype: float
         '''
-        elapsed = self.clock() - self.last_reset
-        return self.period - elapsed
+        return (1.0 - self.allowance) / (self.clamped_calls / self.period)
 
 def sleep_and_retry(func):
     '''
