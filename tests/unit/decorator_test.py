@@ -4,7 +4,7 @@ from tests import unittest, clock
 
 
 class TestDecorator(unittest.TestCase):
-    treshold_method = MagicMock()
+    threshold_method = MagicMock()
 
     @limits(calls=1, period=10, clock=clock)
     def increment(self):
@@ -26,13 +26,13 @@ class TestDecorator(unittest.TestCase):
         period=10,
         clock=clock,
         raise_on_limit=False,
-        treshold=0.5,
-        treshold_method=treshold_method
+        threshold=0.5,
+        threshold_method=threshold_method
     )
-    def increment_treshold_no_exception(self):
+    def increment_threshold_no_exception(self):
         '''
-        Increment the counter at most once every 10 seconds, invoking the treshold method when
-        the treshold is reached, without raising an exception when reaching the rate limit.
+        Increment the counter at most once every 10 seconds, invoking the threshold method when
+        the threshold is reached, without raising an exception when reaching the rate limit.
         '''
         self.count += 1
 
@@ -41,18 +41,18 @@ class TestDecorator(unittest.TestCase):
         period=10,
         clock=clock,
         raise_on_limit=True,
-        treshold=0.5,
-        treshold_method=treshold_method
+        threshold=0.5,
+        threshold_method=threshold_method
     )
-    def increment_treshold(self):
+    def increment_threshold(self):
         '''
-        Increment the counter at most once every 10 seconds, triggering the treshold method when
-        the treshold is reached, while raising an exception when reaching the rate limit.
+        Increment the counter at most once every 10 seconds, triggering the threshold method when
+        the threshold is reached, while raising an exception when reaching the rate limit.
         '''
         self.count += 1
 
     def setUp(self):
-        self.treshold_method.reset_mock()
+        self.threshold_method.reset_mock()
         self.count = 0
         clock.increment(10)
 
@@ -77,28 +77,28 @@ class TestDecorator(unittest.TestCase):
 
         self.assertEqual(self.count, 1)
 
-    def test_treshold_no_exception(self):
-        self.increment_treshold_no_exception()
-        self.increment_treshold_no_exception()
-        self.treshold_method.assert_called_once()
+    def test_threshold_no_exception(self):
+        self.increment_threshold_no_exception()
+        self.increment_threshold_no_exception()
+        self.threshold_method.assert_called_once()
 
-    def test_treshold(self):
-        # These first 3 calls should not trigger the treshold method nor hit the rate limit
-        self.increment_treshold()
-        self.treshold_method.assert_not_called()
+    def test_threshold(self):
+        # These first 3 calls should not trigger the threshold method nor hit the rate limit
+        self.increment_threshold()
+        self.threshold_method.assert_not_called()
 
-        self.increment_treshold()
-        self.treshold_method.assert_not_called()
+        self.increment_threshold()
+        self.threshold_method.assert_not_called()
 
-        self.increment_treshold()
-        self.treshold_method.assert_not_called()
+        self.increment_threshold()
+        self.threshold_method.assert_not_called()
 
-        # This call causes the allowance to drop under the treshold, triggering the treshold_method
-        self.increment_treshold()
-        self.treshold_method.assert_called_once()
+        # This call causes the allowance to drop under the threshold, triggering the threshold_method
+        self.increment_threshold()
+        self.threshold_method.assert_called_once()
 
-        # This call is made while the allowance is still under the treshold value, triggering the
-        # treshold_method once more while also blocking the request as the rate limit has been hit
-        self.treshold_method.reset_mock()
-        self.assertRaises(RateLimitException, self.increment_treshold)
-        self.treshold_method.assert_called_once()
+        # This call is made while the allowance is still under the threshold value, triggering the
+        # threshold_method once more while also blocking the request as the rate limit has been hit
+        self.threshold_method.reset_mock()
+        self.assertRaises(RateLimitException, self.increment_threshold)
+        self.threshold_method.assert_called_once()

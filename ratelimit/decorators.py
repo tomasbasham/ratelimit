@@ -25,8 +25,8 @@ class RateLimitDecorator(object):
             period=900,
             clock=now(),
             raise_on_limit=True,
-            treshold=None,
-            treshold_method=None
+            threshold=None,
+            threshold_method=None
     ):
         '''
         Instantiate a RateLimitDecorator with some sensible defaults. By
@@ -37,15 +37,15 @@ class RateLimitDecorator(object):
         :param float period: An upper bound time period (in seconds) before the rate limit resets.
         :param function clock: An optional function retuning the current time.
         :param bool raise_on_limit: A boolean allowing the caller to avoiding rasing an exception.
-        :param float treshold: Optional fraction of the maximum number of available requests
+        :param float threshold: Optional fraction of the maximum number of available requests
          under which calls invoke method, e.g: 0.2 to trigger at 20% remaining requests.
-        :param function treshold_method: An optional method to invoke when hitting the treshold.
+        :param function threshold_method: An optional method to invoke when hitting the threshold.
         '''
         self.clamped_calls = max(1, min(sys.maxsize, floor(calls)))
         self.period = period
         self.raise_on_limit = raise_on_limit
-        self.treshold = treshold
-        self.treshold_method = treshold_method
+        self.threshold = threshold
+        self.threshold_method = threshold_method
         self.clock = clock
 
         # Initialise the decorator state.
@@ -87,10 +87,10 @@ class RateLimitDecorator(object):
                 if self.allowance > self.clamped_calls:
                     self.allowance = self.clamped_calls
 
-                if self.treshold is not None and self.treshold_method is not None:
-                    treshold_allowance = self.treshold * self.clamped_calls
-                    if self.allowance < treshold_allowance:
-                        self.treshold_method()
+                if self.threshold is not None and self.threshold_method is not None:
+                    threshold_allowance = self.threshold * self.clamped_calls
+                    if self.allowance < threshold_allowance:
+                        self.threshold_method()
                 if self.allowance < 1.0:
                     period_renaming = self.__period_remaining()
                     if self.raise_on_limit:
