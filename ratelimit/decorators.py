@@ -39,7 +39,7 @@ class RateLimitDecorator(object):
         :param bool raise_on_limit: A boolean allowing the caller to avoiding rasing an exception.
         :param float threshold: Optional fraction of the maximum number of available requests
          under which calls invoke method, e.g: 0.2 to trigger at 20% remaining requests.
-        :param function threshold_method: An optional method to invoke when hitting the threshold.
+        :param threshold_method: An optional method to invoke when hitting the threshold.
         '''
         self.clamped_calls = max(1, min(sys.maxsize, floor(calls)))
         self.period = period
