@@ -83,6 +83,7 @@ class RateLimitDecorator(object):
                     return
 
             return func(*args, **kargs)
+        wrapper.reset_ratelimit = self.reset_ratelimit
         return wrapper
 
     def __period_remaining(self):
@@ -94,6 +95,13 @@ class RateLimitDecorator(object):
         '''
         elapsed = self.clock() - self.last_reset
         return self.period - elapsed
+    
+    def reset_ratelimit(self):
+        '''
+        Reset the ratelimit.
+        '''
+        self.last_reset = self.clock()
+        self.num_calls = 0
 
 def sleep_and_retry(func):
     '''
