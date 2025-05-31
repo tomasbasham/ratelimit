@@ -69,7 +69,24 @@ To use this package simply decorate any function that makes an API call:
             raise Exception('API response: {}'.format(response.status_code))
         return response
 
-This function will not be able to make more then 15 API call within a 15 minute
+Similarly, it is possible to decorate async functions:
+.. code:: python
+    import aiohttp
+    from ratelimit import limits
+
+    FIFTEEN_MINUTES = 900
+
+    @limits(calls=15, period=FIFTEEN_MINUTES)
+    async def curl(url):
+        async with aiohttp.ClientSession() as session:
+            async with session.request('GET', url) as response:
+                print(repr(response))
+                chunk = await response.content.read()
+                print('Downloaded: %s' % len(chunk))
+
+
+
+These functions will not be able to make more then 15 API call within a 15 minute
 time period.
 
 The arguments passed into the decorator describe the number of function
@@ -77,7 +94,7 @@ invocation allowed over a specified time period (in seconds). If no time period
 is specified then it defaults to 15 minutes (the time window imposed by
 Twitter).
 
-If a decorated function is called more times than that allowed within the
+If a decorated function is called (or awaited in async case) more times than that allowed within the
 specified time period then a ``ratelimit.RateLimitException`` is raised. This
 may be used to implement a retry strategy such as an `expoential backoff
 <https://pypi.org/project/backoff/>`_
@@ -103,7 +120,8 @@ may be used to implement a retry strategy such as an `expoential backoff
 Alternatively to cause the current thread to sleep until the specified time
 period has ellapsed and then retry the function use the ``sleep_and_retry``
 decorator. This ensures that every function invocation is successful at the
-cost of halting the thread.
+cost of halting the thread. This decorator also works with async functions,
+causing it to `asyncio.sleep` until cooldown time expires.
 
 .. code:: python
 
