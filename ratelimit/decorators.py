@@ -113,9 +113,8 @@ def sleep_and_retry(func):
         :param args: non-keyword variable length argument list to the decorated function.
         :param kargs: keyworded variable length argument list to the decorated function.
         '''
-        while True:
-            try:
-                return func(*args, **kargs)
-            except RateLimitException as exception:
-                time.sleep(exception.period_remaining)
+        try:
+            return func(*args, **kargs)
+        except RateLimitException as exception:
+            threading.Timer(exception.period_remaining, func, *args, **kargs).start()
     return wrapper
